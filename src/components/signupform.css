@@ -1,0 +1,15 @@
+.compact-input .form-control {
+  padding-top: 0.4rem !important;
+  padding-bottom: 0.4rem !important;
+  height: auto !important; /* ensures consistent height */
+  font-size: 0.9rem; /* optional - smaller text */
+  
+}
+
+.compact-input .form-floating > label {
+  padding: 0.4rem 0.75rem !important; /* adjusts label space */
+}
+.form-control:focus {
+  box-shadow: none !important; /* removes default focus shadow */
+border:1px solid #ced4da !important; /* keeps border consistent on focus */
+}
