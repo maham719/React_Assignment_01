@@ -1,4 +1,4 @@
-import Formpage from './pages/formpage'
+import Formpage from './pages/Formpage'
 function App() {
 
 
