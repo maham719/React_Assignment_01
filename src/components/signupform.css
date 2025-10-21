@@ -13,3 +13,6 @@
   box-shadow: none !important; /* removes default focus shadow */
 border:1px solid #ced4da !important; /* keeps border consistent on focus */
 }
+.signupG:hover .google-icon{
+    color: white !important;
+}
