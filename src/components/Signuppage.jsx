@@ -6,98 +6,113 @@ import { RiGoogleFill } from '@remixicon/react';
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
-
+import { toast } from "react-toastify";
 import './signupform.css';
-function Signuppage() {
-   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert("Account created successfully!");
-    } catch (err) {
-      setError(err.message);
+function Signuppage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  // signup with googe 
+const handleGoogleSignup = () => {
+  const provider = new GoogleAuthProvider();
+
+  const googlePromise = signInWithPopup(auth, provider);
+
+  toast.promise(googlePromise, {
+    pending: "Connecting to Google...",
+    success: "Signed in with Google 🎉",
+    error: {
+      render({ data }) {
+        return data.message;
+      }
     }
+  });
+
+  googlePromise.catch((err) => {
+    console.error(err);
+  });
+};
+
+  const handleSignup = (e) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match!");
+      return;
+    }
+
+    const signupPromise = createUserWithEmailAndPassword(auth, email, password);
+
+    toast.promise(signupPromise, {
+      pending: "Creating your account...",
+      success: "Account created successfully! 🎉",
+      error: {
+        render({ data }) {
+          return data.message;
+        }
+      }
+    });
+
+    signupPromise.catch(() => {});
   };
+
   return (
     <Form onSubmit={handleSignup}>
-        <InputGroup className="mb-3 compact-input">
-         <FloatingLabel
-        controlId="floatingInput"
-        label="First name"
-        className='p-0'
-      >
-      <Form.Control  type='text' placeholder='First name'/>
-      </FloatingLabel>
 
-         <FloatingLabel
-        controlId="floatingInput"
-        label="Last name"
-        className='p-0'
+      <InputGroup className="mb-3 compact-input">
+        <FloatingLabel label="First name" className='p-0'>
+          <Form.Control type='text' placeholder='First name' />
+        </FloatingLabel>
 
-      >
-      <Form.Control   type='text' placeholder='Last name'/>
-      </FloatingLabel>
+        <FloatingLabel label="Last name" className='p-0'>
+          <Form.Control type='text' placeholder='Last name' />
+        </FloatingLabel>
+      </InputGroup>
 
-    </InputGroup>
-
-      <Form.Group className="mb-3" controlId="formBasicEmail">
-        <FloatingLabel
-        controlId="floatingInput"
-        label="Phone # "
-        className='p-0'
- onChange={(e) => setEmail(e.target.value)}
-      >
-        <Form.Control type="tel" placeholder="Phone no" />
-      </FloatingLabel>
+      <Form.Group className="mb-3">
+        <FloatingLabel label="Enter Email" className='p-0'>
+          <Form.Control 
+            type="email"
+            placeholder="Enter email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </FloatingLabel>
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formBasicEmail">
-        <FloatingLabel
-        controlId="floatingInput"
-        label="Enter Email"
-        className='p-0'
+      <InputGroup className="mb-3 compact-input">
+        <FloatingLabel label="Password" className='p-0'>
+          <Form.Control
+            type="password"
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </FloatingLabel>
 
-      >
-        <Form.Control type="email" placeholder="Enter email" />
-      </FloatingLabel>
+        <FloatingLabel label="Confirm Password" className='p-0'>
+          <Form.Control
+            type="password"
+            placeholder="Confirm Password"
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </FloatingLabel>
+      </InputGroup>
+
+      <Form.Group>
+        <Button variant="outline-dark" type="submit" className='px-5'>
+          Signup
+        </Button>
+        <p>OR</p>
+        <Button variant="outline-dark" className='px-5 signupG' onClick={handleGoogleSignup}>
+          <RiGoogleFill size="24px" className='google-icon' /> 
+          Sign up with Google
+        </Button>
       </Form.Group>
 
-<InputGroup className="mb-3 compact-input">
-
-        <FloatingLabel
-        controlId="floatingInput"
-        label="Password"
-        className='p-0'
- onChange={(e) => setPassword(e.target.value)}
-      >
-        <Form.Control type="password" placeholder="Password" />
-      </FloatingLabel>
-
-        <FloatingLabel
-        controlId="floatingInput"
-        label="Confirm  Password"
-        className='p-0'
-
-      >
-        <Form.Control type="password" placeholder="Confirm Password" />
-      </FloatingLabel>
-</InputGroup>
-
-<Form.Group>
-      <Button variant="outline-dark" type="submit" className='px-5'>
-        Signup
-      </Button>
-      <p>OR </p>
-       <Button variant="outline-dark" type="submit" className='px-5 signupG'>
-         <RiGoogleFill size="24px"  className='google-icon'/> Sign up with google 
-      </Button>
-      </Form.Group>
     </Form>
   );
 }
- 
+
 export default Signuppage;
